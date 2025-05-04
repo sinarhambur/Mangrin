@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Custom Language Translator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+body {
+margin: 0;
+padding: 0;
+font-family: 'Poppins', sans-serif;
+background: linear-gradient(135deg, #667eea, #764ba2);
+color: #fff;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+min-height: 600px;
+max-width: 350px;
+margin-left: auto;
+margin-right: auto;
+padding: 20px 15px;
+box-sizing: border-box;
+}
+h1 {
+font-weight: 600;
+margin-bottom: 0.2em;
+font-size: 1.6rem;
+text-align: center;
+}
+p.subtitle {
+font-weight: 400;
+font-size: 0.9rem;
+margin-top: 0;
+margin-bottom: 1.5em;
+text-align: center;
+color: #d1c4e9dd;
+}
+label {
+font-weight: 600;
+font-size: 0.9rem;
+margin-bottom: 6px;
+display: block;
+}
+textarea, select {
+width: 100%;
+font-size: 1rem;
+border-radius: 8px;
+border: none;
+padding: 10px;
+margin-bottom: 15px;
+resize: vertical;
+font-family: 'Poppins', sans-serif;
+}
+textarea {
+height: 120px;
+}
+select {
+background: #5a4a91;
+color: #fff;
+}
+button {
+background-color: #ff6584;
+color: white;
+border: none;
+padding: 12px;
+width: 100%;
+font-size: 1rem;
+font-weight: 600;
+border-radius: 8px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+button:hover,
+button:focus {
+background-color: #ff3b6f;
+outline: none;
+}
+.output-container {
+background: rgba(255, 255, 255, 0.2);
+border-radius: 8px;
+min-height: 120px;
+padding: 12px;
+font-size: 1rem;
+white-space: pre-wrap;
+overflow-y: auto;
+color: #fff;
+user-select: text;
+}
+@media (max-width: 400px) {
+body {
+max-width: 100%;
+padding: 15px 10px;
+}
+textarea {
+height: 100px;
+}
+}
+</style>
+</head>
+<body>
+<h1>Custom Language Translator</h1>
+<p class="subtitle">Translate text into your custom language</p>
+
+<label for="sourceLang">Source Language</label>
+<select id="sourceLang" aria-label="Select source language">
+<option value="en" selected>English</option>
+<option value="id">Indonesian</option>
+<option value="mang">manggarai</option>
+<option value="mand">mandarin</option>
+</select>
+
+<label for="inputText">Enter text to translate</label>
+<textarea id="inputText" placeholder="Type or paste text here..."></textarea>
+
+<button id="translateBtn" aria-label="Translate text">Translate</button>
+
+<label for="outputText">Translation (Custom Language)</label>
+<div id="outputText" class="output-container" aria-live="polite" aria-atomic="true" tabindex="0"></div>
+
+<script>
+const dictionaries = {
+en: {
+"hello": "你好",
+"world": "世界",
+"how": "吗",
+"are": "好",
+"you": "你",
+"i": "我",
+"am": "很",
+"fine": "好",
+"thank": "谢",
+"thanks": "谢",
+"yes": "好的",
+"no": "不",
+"please": "请",
+"good": "上好",
+"morning": "早",
+"afternoon": "午",
+"night": "晚",
+"love": "爱",
+"friend": "朋友"
+},
+id: {
+"halo" : "你好",
+"dunia": "世界",
+"apa" : "吗",
+"kabar": "好",
+"kamu": "你",
+"aku": "我",
+"baik": "好的",
+"terima": "谢",
+"kasih": "谢",
+"ya": "好的",
+"tidak": "不",
+"tolong": "请",
+"selamat": "上好",
+"pagi": "早",
+"siang ":"午 ",
+"malam": "晚",
+"cinta": "爱",
+"teman": "朋友"
+},
+mang: {
+"hallo": "你好",
+"tana lino":"世界",
+"ape":"什么",
+"ite ":"你",
+"aku": "我",
+"di^a ":"好",
+"terima ":"谢",
+"kasih ":"谢",
+"eng ga":"好的",
+"toe ":" 不 ",
+"tolong ":" 请",
+"tana":"上好",
+"gula ":"早 ",
+"leso ":"午 ",
+"wie ":"晚 ",
+"momang":"爱 ",
+"teman":"朋友
+}
+mand: {
+"你好":"你好"
+"世界":"世界"
+"什么":"什么"
+" 好 ":"好"
+" 谢 ":"谢"
+" 谢 ":"谢"
+"好的":"好的"
+" 不 ":" 不 "
+" 请 ":" 请 "
+"上好":"上好"
+" 早 ":"早 "
+" 午 ":"午 "
+" 晚 ":"晚 "
+" 爱 ":"爱 "
+" 朋友 ":"朋友 "
+
+function translateText(sourceLang, text) {
+if (!text.trim()) return "";
+
+const normalizedText = text.toLowerCase().replace(/[.,!?;:'"-]/g, "");
+const words = normalizedText.split(/\s+/);
+const dict = dictionaries[sourceLang] || {};
+
+const translatedWords = words.map(word => dict[word] || word);
+return translatedWords.join(" ");
+}
+
+const inputTextEl = document.getElementById("inputText");
+const outputTextEl = document.getElementById("outputText");
+const sourceLangEl = document.getElementById("sourceLang");
+const translateBtn = document.getElementById("translateBtn");
+
+translateBtn.addEventListener("click", () => {
+const sourceLang = sourceLangEl.value;
+const inputText = inputTextEl.value;
+const translation = translateText(sourceLang, inputText);
+outputTextEl.textContent = translation || "(No translation)";
+});
+
+inputTextEl.addEventListener("keydown", e => {
+if ((e.key === "Enter" || e.key === "NumpadEnter") && !e.shiftKey) {
+e.preventDefault();
+translateBtn.click();
+}
+});
+</script>
+</body>
+</html>
+
